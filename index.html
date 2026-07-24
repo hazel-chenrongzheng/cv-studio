@@ -58,9 +58,11 @@
   .addbtn:hover{ background:#eaf5ef; }
   @media print{
     @page{ size:letter; margin:0; }
-    body{ background:#fff; }
+    html,body{ height:100%; background:#fff; overflow:hidden; }
     .toolbar,.hint,.addbtn,.sec-tools,.ctrls,.bctrls,.mv,.del{ display:none !important; }
-    .page{ box-shadow:none; margin:0; width:auto; min-height:auto; padding:0.5in 0.6in; }
+    .page{ box-shadow:none; margin:0; width:auto;
+      min-height:auto; max-height:10in; padding:0.5in 0.6in;
+      overflow:hidden; page-break-inside:avoid; break-inside:avoid; }
     [contenteditable]:hover,[contenteditable]:focus{ background:none; box-shadow:none; }
   }
 </style>
