@@ -58,11 +58,10 @@
   .addbtn:hover{ background:#eaf5ef; }
   @media print{
     @page{ size:letter; margin:0; }
-    html,body{ height:100%; background:#fff; overflow:hidden; }
+    html,body{ background:#fff; }
     .toolbar,.hint,.addbtn,.sec-tools,.ctrls,.bctrls,.mv,.del{ display:none !important; }
-    .page{ box-shadow:none; margin:0; width:auto;
-      min-height:auto; max-height:10in; padding:0.5in 0.6in;
-      overflow:hidden; page-break-inside:avoid; break-inside:avoid; }
+    .page{ box-shadow:none; margin:0; width:8.5in; min-height:auto; padding:0.5in 0.6in;
+      transform-origin:top left; }
     [contenteditable]:hover,[contenteditable]:focus{ background:none; box-shadow:none; }
   }
 </style>
@@ -336,6 +335,22 @@ ${body}
 }
 function download(text,filename,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob);
   const el=document.createElement('a'); el.href=url; el.download=filename; el.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
+window.addEventListener('beforeprint', ()=>{
+  const pg = document.querySelector('.page');
+  const maxH = 10 * 96;
+  const natural = pg.scrollHeight;
+  if(natural > maxH){
+    const scale = maxH / natural;
+    pg.style.transform = 'scale('+scale+')';
+    pg.style.transformOrigin = 'top center';
+    pg.style.width = (100/scale)+'%';
+  }
+});
+window.addEventListener('afterprint', ()=>{
+  const pg = document.querySelector('.page');
+  pg.style.transform = '';
+  pg.style.width = '';
+});
 
 renderAll();
 </script>
