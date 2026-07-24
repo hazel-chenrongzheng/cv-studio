@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Studio — Chenrong Zheng</title>
+<style>
+  :root{ --ink:#111; --muted:#666; --line:#111; --accent:#2c6e49; --bg:#f4f4f2; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Latin Modern Roman","Georgia","Times New Roman","Songti SC","STSong","Noto Serif CJK SC",serif; }
+  /* ---------- Toolbar ---------- */
+  .toolbar{ position:sticky; top:0; z-index:50; background:#1c1c1c; color:#fff;
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:9px 16px;
+    box-shadow:0 2px 8px rgba(0,0,0,.25); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .toolbar b{ font-size:14px; margin-right:4px; letter-spacing:.3px; }
+  .toolbar .spacer{ flex:1; }
+  .toolbar select{ background:#2a2a2a; color:#fff; border:1px solid #444; border-radius:7px;
+    padding:6px 10px; font-size:13px; max-width:240px; }
+  button.tb{ background:#333; color:#fff; border:1px solid #444; padding:6px 11px;
+    border-radius:7px; font-size:13px; cursor:pointer; transition:.15s; }
+  button.tb:hover{ background:var(--accent); border-color:var(--accent); }
+  button.tb.primary{ background:var(--accent); border-color:var(--accent); }
+  .saved{ font-family:system-ui,sans-serif; font-size:12px; color:#7fd1a3; min-width:56px; }
+  .hint{ font-family:system-ui,sans-serif; font-size:12px; color:#8a8a8a; padding:6px 16px 0; }
+  /* ---------- Page ---------- */
+  .page{ width:8.5in; min-height:11in; margin:18px auto 60px; background:#fff; padding:0.5in 0.6in;
+    box-shadow:0 6px 30px rgba(0,0,0,.15); }
+  .name{ text-align:center; font-size:30px; font-weight:700; letter-spacing:1px; }
+  .contact{ text-align:center; font-size:12.5px; margin-top:4px; color:#222; }
+  .section{ margin-top:14px; }
+  .sec-title{ font-variant:small-caps; font-size:15px; letter-spacing:.5px; font-weight:700;
+    border-bottom:1.3px solid var(--line); padding-bottom:2px; margin-bottom:6px; }
+  .entry{ position:relative; margin:7px 0; }
+  .entry-row{ display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+  .entry-row .l{ font-weight:700; font-size:13.5px; }
+  .entry-row .r{ font-size:12.5px; white-space:nowrap; }
+  .entry-sub{ display:flex; justify-content:space-between; gap:12px; align-items:baseline; font-style:italic; font-size:12.5px; color:#333; }
+  ul.bullets{ margin:3px 0 0; padding-left:18px; }
+  ul.bullets li{ font-size:12.5px; line-height:1.4; margin:2px 0; position:relative; }
+  .skills-row{ font-size:12.5px; line-height:1.5; margin:2px 0; position:relative; }
+  .skills-row .lab{ font-weight:700; }
+  [contenteditable]{ outline:none; border-radius:3px; }
+  [contenteditable]:hover{ background:#fbf6d9; }
+  [contenteditable]:focus{ background:#fff6c2; box-shadow:0 0 0 2px #ffe27a; }
+  /* controls */
+  .ctrls{ position:absolute; left:-26px; top:0; display:flex; flex-direction:column; gap:1px; opacity:0; transition:.15s; }
+  .entry:hover .ctrls{ opacity:1; }
+  .bctrls{ position:absolute; left:-48px; top:0; display:flex; gap:1px; opacity:0; transition:.15s; }
+  li:hover .bctrls, .skills-row:hover .bctrls{ opacity:1; }
+  .mv,.del{ width:16px; height:15px; border:none; border-radius:4px; color:#fff; font-size:10px;
+    line-height:15px; cursor:pointer; font-family:system-ui,sans-serif; padding:0; }
+  .mv{ background:#555; } .mv:hover{ background:var(--accent); }
+  .del{ background:#e5484d; } .del:hover{ background:#c0393d; }
+  .sec-tools{ display:inline-flex; gap:4px; margin-left:8px; vertical-align:middle; }
+  .addbtn{ font-family:system-ui,sans-serif; font-size:11.5px; color:var(--accent);
+    background:none; border:1px dashed var(--accent); border-radius:6px; padding:2px 8px; cursor:pointer; margin:4px 0; }
+  .addbtn:hover{ background:#eaf5ef; }
+  @media print{
+    @page{ size:letter; margin:0; }
+    body{ background:#fff; }
+    .toolbar,.hint,.addbtn,.sec-tools,.ctrls,.bctrls,.mv,.del{ display:none !important; }
+    .page{ box-shadow:none; margin:0; width:auto; min-height:auto; padding:0.5in 0.6in; }
+    [contenteditable]:hover,[contenteditable]:focus{ background:none; box-shadow:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <b>CV Studio</b>
+  <select id="picker" onchange="switchResume(this.value)" title="Switch CV"></select>
+  <button class="tb" onclick="newResume()">+ New</button>
+  <button class="tb" onclick="dupResume()">Duplicate</button>
+  <button class="tb" onclick="renameResume()">Rename</button>
+  <button class="tb" onclick="delResume()">Delete</button>
+  <span class="saved" id="saved">Saved ✓</span>
+  <span class="spacer"></span>
+  <button class="tb" onclick="exportLatex()">⬇ LaTeX</button>
+  <button class="tb" onclick="backup()">⬇ Backup</button>
+  <button class="tb" onclick="document.getElementById('restore').click()">⬆ Restore</button>
+  <input type="file" id="restore" accept="application/json" style="display:none" onchange="restore(this)">
+  <button class="tb primary" onclick="window.print()">🖨 PDF</button>
+</div>
+<div class="hint">Click any text to edit — changes auto-save to this browser. Hover an entry, bullet, skill row, or section title for ▲ ▼ × (move / delete). Use “+” links to add. Backup downloads all your CVs as a file; Restore loads one on another device. PDF → “Save as PDF”.</div>
+
+<div class="page" id="page">
+  <div class="name" contenteditable="true" oninput="active().name=this.textContent"></div>
+  <div class="contact" contenteditable="true" oninput="active().contact=this.textContent"></div>
+  <div id="sections"></div>
+</div>
+
+<script>
+const LS_KEY = 'cvStudio_v1';
+
+// ---------- Seed content (EY audit CV) ----------
+function seedResume(){ return {
+  label:"EY 审计 SA1（法语组）",
+  name:"郑晨榕   Chenrong Zheng",
+  contact:"510-717-4615  |  chenrong.zheng@berkeley.edu  |  中国籍  |  法语 B2",
+  sections:[
+    { title:"教育背景", type:"entries", items:[
+      { l:"加州大学伯克利分校 & 巴黎政治学院（双学位项目）", r:"2022.08 – 2026.05",
+        sub_l:"经济学学士；辅修 数据科学、国际贸易与金融", sub_r:"巴黎 & 伯克利",
+        bullets:[ "在巴黎政治学院进行两年法语授课学习；法语水平 B2",
+                  "相关课程：金融经济学、计量经济学、商业分析、高等微积分、机器学习" ]}
+    ]},
+    { title:"工作经历", type:"entries", items:[
+      { l:"投资与数据分析实习生", r:"2024.06 – 2024.08",
+        sub_l:"Winreal 投资 | 专注硬科技与数字科技的风险投资机构", sub_r:"上海",
+        bullets:[
+          "运用 Python 与 SQL 为 25+ 个投资项目搭建 ROI 与情景测试模型；开展市场测算与尽职调查分析，支持超过 100 万美元的投资决策。",
+          "对 30,000 行尽调数据进行数据校验与完整性核对，发现并修正错误，将处理周期缩短 20%。",
+          "通过反复回测将预测误差率从 20% 降至 14%；将分析结果整理为结构化报告与风险评估可视化图表，向相关方汇报。" ]},
+      { l:"数据与运营分析实习生", r:"2025.11 – 2026.06",
+        sub_l:"伯克利数据科学研究院（BIDS）", sub_r:"伯克利",
+        bullets:[
+          "将来自 100+ 个分散来源的 15,000+ 条记录核对并整合进统一的结构化系统，开发 Python 程序进行每周核验与去重，将人工处理量减少 90%。",
+          "使用 Python 与 SQL 自动化每周报告及 20+ 种可视化图表，将报告周期从 6 小时缩短至 1 小时以内。",
+          "在 GitHub 上管理 13 个团队的文档与版本控制；协调 30+ 场研讨会及内外部相关方的沟通。" ]},
+      { l:"研究助理", r:"2026.01 – 2026.05",
+        sub_l:"加州大学伯克利分校 经济系（E-URAP 项目）", sub_r:"伯克利",
+        bullets:[
+          "在 Stata 与 R 中构建校验检查与可复现性流程，确保 15,000+ 条观测数据的完整性。",
+          "开发 Python 抓取管线，从 250+ 个来源采集并整理 20,000+ 条记录，将人工采集时间减少 95%；对涵盖 50 个州、跨 10 年的数据集进行回归分析。" ]},
+      { l:"商务拓展与分析实习生", r:"2025.06 – 2025.08",
+        sub_l:"Pivot Tokyo | 日本能源峰会主办方", sub_r:"东京",
+        bullets:[
+          "对历史定价梯度表现进行差异分析，识别成本驱动因素，使收入提升 15%（约 3,000 美元高毛利收入）。",
+          "搭建追踪 400+ 联系人的 CRM 并自动化每周报告；跨销售、市场与运营团队协作。" ]}
+    ]},
+    { title:"项目与领导经历", type:"entries", items:[
+      { l:"IoU 实时租赁匹配平台 | Python、SQL、关系型数据库", r:"2026.01 – 2026.05", sub_l:"", sub_r:"",
+        bullets:[ "使用 Python 分析 2,000+ 条竞品房源数据，识别定价规律与需求缺口；设计含 5 张表的关系型数据库并编写 SQL 查询以端到端监控核心指标。" ]},
+      { l:"Millennium Fellowship（联合国学术影响力）| 校园负责人", r:"2023.08 – 2024.05", sub_l:"", sub_r:"",
+        bullets:[ "统筹校园项目并协调团队活动，负责日程管理、跨方协调与成果汇报。" ]}
+    ]},
+    { title:"专业技能", type:"skills", rows:[
+      { lab:"数据可视化与编程", val:"Tableau、Power BI、Python（Pandas、NumPy）、R、SQL、Stata、Excel（建模、数据透视表）、Git/GitHub" },
+      { lab:"财务与审计相关", val:"财务建模、ROI 与情景分析、数据校验与核对、风险评估、差异分析、文档与报告" },
+      { lab:"语言", val:"中文（母语）、英语（母语）、法语（B2）、韩语（母语）、日语（中级）" }
+    ]}
+  ]
+};}
+
+// ---------- Store ----------
+let store = load();
+function load(){
+  try{ const s = JSON.parse(localStorage.getItem(LS_KEY)); if(s && s.order && s.order.length) return s; }catch(e){}
+  const id = uid();
+  const s = { order:[id], active:id, resumes:{} }; s.resumes[id] = seedResume();
+  return s;
+}
+let saveTimer=null;
+function save(now){
+  clearTimeout(saveTimer);
+  const doIt=()=>{ try{ localStorage.setItem(LS_KEY, JSON.stringify(store)); flash(); }catch(e){ document.getElementById('saved').textContent='⚠ not saved'; } };
+  if(now) doIt(); else saveTimer=setTimeout(doIt, 400);
+}
+function flash(){ const s=document.getElementById('saved'); s.textContent='Saved ✓'; s.style.opacity=.5; setTimeout(()=>s.style.opacity=1,150); }
+function uid(){ return 'r'+Math.random().toString(36).slice(2,9); }
+function active(){ return store.resumes[store.active]; }
+
+// ---------- Resume manager ----------
+function renderPicker(){
+  const p=document.getElementById('picker'); p.innerHTML='';
+  store.order.forEach(id=>{ const o=document.createElement('option'); o.value=id; o.textContent=store.resumes[id].label||'(untitled)'; if(id===store.active)o.selected=true; p.appendChild(o); });
+}
+function switchResume(id){ store.active=id; save(true); renderAll(); }
+function newResume(){
+  const id=uid(); store.resumes[id]={ label:"新简历 New CV", name:"姓名 Name", contact:"电话 | 邮箱 | ...",
+    sections:[{title:"教育背景",type:"entries",items:[{l:"学校 / 学位",r:"日期",sub_l:"专业",sub_r:"地点",bullets:["…"]}]},
+              {title:"工作经历",type:"entries",items:[{l:"职位",r:"日期",sub_l:"机构",sub_r:"地点",bullets:["…"]}]},
+              {title:"专业技能",type:"skills",rows:[{lab:"技能",val:"…"}]}] };
+  store.order.push(id); store.active=id; save(true); renderAll();
+}
+function dupResume(){
+  const id=uid(); const copy=JSON.parse(JSON.stringify(active())); copy.label=(copy.label||'CV')+' (副本)';
+  store.resumes[id]=copy; const i=store.order.indexOf(store.active); store.order.splice(i+1,0,id); store.active=id; save(true); renderAll();
+}
+function renameResume(){ const n=prompt("Rename this CV:", active().label); if(n!==null){ active().label=n.trim()||active().label; save(true); renderPicker(); } }
+function delResume(){
+  if(store.order.length<=1){ alert("You need at least one CV. Duplicate first if you want a fresh start."); return; }
+  if(!confirm("Delete “"+active().label+"”? This can't be undone.")) return;
+  const i=store.order.indexOf(store.active); delete store.resumes[store.active]; store.order.splice(i,1);
+  store.active=store.order[Math.max(0,i-1)]; save(true); renderAll();
+}
+
+// ---------- Backup / Restore ----------
+function backup(){ download(JSON.stringify(store,null,2), 'cv-studio-backup.json', 'application/json'); }
+function restore(input){
+  const f=input.files[0]; if(!f) return; const rd=new FileReader();
+  rd.onload=()=>{ try{ const s=JSON.parse(rd.result);
+      if(!s.order||!s.resumes) throw 0;
+      if(confirm("Restore will replace your current CVs with the backup. Continue?")){ store=s; save(true); renderAll(); } }
+    catch(e){ alert("That file isn't a valid CV Studio backup."); } input.value=''; };
+  rd.readAsText(f);
+}
+
+// ---------- Render page ----------
+const elSections=document.getElementById('sections');
+function renderAll(){ renderPicker();
+  document.querySelector('.name').textContent=active().name;
+  document.querySelector('.contact').textContent=active().contact;
+  render();
+}
+function move(arr,i,dir){ const j=i+dir; if(j<0||j>=arr.length) return; const t=arr[i]; arr[i]=arr[j]; arr[j]=t; save(); render(); }
+function mkBtn(cls,txt,title,fn){ const b=document.createElement('button'); b.className=cls; b.textContent=txt; b.title=title; b.onclick=fn; return b; }
+function mkEdit(cls,obj,key){ const s=document.createElement('div'); if(cls)s.className=cls; s.contentEditable=true; s.textContent=obj[key]||""; s.oninput=()=>{obj[key]=s.textContent; save();}; return s; }
+
+function render(){
+  const secs=active().sections; elSections.innerHTML='';
+  secs.forEach((sec,si)=>{
+    const secEl=document.createElement('div'); secEl.className='section';
+    const title=document.createElement('div'); title.className='sec-title';
+    const tspan=document.createElement('span'); tspan.contentEditable=true; tspan.textContent=sec.title; tspan.oninput=()=>{sec.title=tspan.textContent; save();};
+    title.appendChild(tspan);
+    const tools=document.createElement('span'); tools.className='sec-tools';
+    tools.append(mkBtn('mv','▲','Move section up',()=>move(secs,si,-1)), mkBtn('mv','▼','Move section down',()=>move(secs,si,1)),
+                 mkBtn('del','×','Delete section',()=>{ secs.splice(si,1); save(); render(); }));
+    title.appendChild(tools); secEl.appendChild(title);
+
+    if(sec.type==='skills'){
+      sec.rows.forEach((row,ri)=>{
+        const r=document.createElement('div'); r.className='skills-row';
+        const c=document.createElement('span'); c.className='bctrls';
+        c.append(mkBtn('mv','▲','Up',()=>move(sec.rows,ri,-1)), mkBtn('mv','▼','Down',()=>move(sec.rows,ri,1)),
+                 mkBtn('del','×','Delete',()=>{ sec.rows.splice(ri,1); save(); render(); }));
+        const lab=document.createElement('span'); lab.className='lab'; lab.contentEditable=true; lab.textContent=row.lab; lab.oninput=()=>{row.lab=lab.textContent; save();};
+        const sep=document.createElement('span'); sep.textContent='：';
+        const val=document.createElement('span'); val.contentEditable=true; val.textContent=row.val; val.oninput=()=>{row.val=val.textContent; save();};
+        r.append(c,lab,sep,val); secEl.appendChild(r);
+      });
+      const add=document.createElement('button'); add.className='addbtn'; add.textContent='+ 技能行 row';
+      add.onclick=()=>{ sec.rows.push({lab:"新分类",val:"..."}); save(); render(); };
+      secEl.appendChild(add); elSections.appendChild(secEl); return;
+    }
+
+    sec.items.forEach((it,ii)=>{
+      const e=document.createElement('div'); e.className='entry';
+      const ec=document.createElement('div'); ec.className='ctrls';
+      ec.append(mkBtn('mv','▲','Move entry up',()=>move(sec.items,ii,-1)), mkBtn('mv','▼','Move entry down',()=>move(sec.items,ii,1)),
+                mkBtn('del','×','Delete entry',()=>{ sec.items.splice(ii,1); save(); render(); }));
+      e.appendChild(ec);
+      const row=document.createElement('div'); row.className='entry-row';
+      row.append(mkEdit('l',it,'l'), mkEdit('r',it,'r')); e.appendChild(row);
+      const sub=document.createElement('div'); sub.className='entry-sub';
+      sub.append(mkEdit('',it,'sub_l'), mkEdit('',it,'sub_r')); e.appendChild(sub);
+      const ul=document.createElement('ul'); ul.className='bullets';
+      it.bullets.forEach((b,bi)=>{
+        const li=document.createElement('li');
+        const bc=document.createElement('span'); bc.className='bctrls';
+        bc.append(mkBtn('mv','▲','Move bullet up',()=>move(it.bullets,bi,-1)), mkBtn('mv','▼','Move bullet down',()=>move(it.bullets,bi,1)),
+                  mkBtn('del','×','Delete bullet',()=>{ it.bullets.splice(bi,1); save(); render(); }));
+        const span=document.createElement('span'); span.contentEditable=true; span.textContent=b; span.oninput=()=>{it.bullets[bi]=span.textContent; save();};
+        li.append(bc,span); ul.appendChild(li);
+      });
+      e.appendChild(ul);
+      const addB=document.createElement('button'); addB.className='addbtn'; addB.textContent='+ bullet';
+      addB.onclick=()=>{ it.bullets.push("新的一条…"); save(); render(); };
+      e.appendChild(addB); secEl.appendChild(e);
+    });
+    const addE=document.createElement('button'); addE.className='addbtn'; addE.textContent='+ 条目 entry';
+    addE.onclick=()=>{ sec.items.push({l:"职位 / 标题",r:"日期",sub_l:"机构",sub_r:"地点",bullets:["…"]}); save(); render(); };
+    secEl.appendChild(addE); elSections.appendChild(secEl);
+  });
+  // add-section link
+  const addS=document.createElement('button'); addS.className='addbtn'; addS.textContent='+ 章节 section'; addS.style.marginTop='10px';
+  addS.onclick=()=>{ secs.push({title:"新章节",type:"entries",items:[{l:"职位 / 标题",r:"日期",sub_l:"机构",sub_r:"地点",bullets:["…"]}]}); save(); render(); };
+  elSections.appendChild(addS);
+}
+
+// ---------- Export LaTeX ----------
+function esc(s){ return (s||"").replace(/\\/g,'\\textbackslash{}').replace(/([%&#_$])/g,'\\$1'); }
+function exportLatex(){
+  const a=active();
+  let body='';
+  a.sections.forEach(sec=>{
+    body+=`\n\\section{${esc(sec.title)}}\n`;
+    if(sec.type==='skills'){
+      body+=` \\begin{itemize}[leftmargin=0.15in, label={}]\n    \\small{\\item{\n`;
+      sec.rows.forEach((row,i)=>{ body+=`     \\textbf{${esc(row.lab)}}{：${esc(row.val)}}`+(i<sec.rows.length-1?' \\\\ \\vspace{2pt}\n':'\n'); });
+      body+=`    }}\n \\end{itemize}\n`; return;
+    }
+    body+=`  \\resumeSubHeadingListStart\n`;
+    sec.items.forEach(it=>{
+      if(it.sub_l||it.sub_r) body+=`    \\resumeSubheading\n      {${esc(it.l)}}{${esc(it.r)}}\n      {${esc(it.sub_l)}}{${esc(it.sub_r)}}\n`;
+      else body+=`    \\resumeProjectHeading\n      {\\textbf{${esc(it.l)}}}{${esc(it.r)}}\n`;
+      body+=`      \\resumeItemListStart\n`; it.bullets.forEach(b=> body+=`        \\resumeItem{${esc(b)}}\n`); body+=`      \\resumeItemListEnd\n`;
+    });
+    body+=`  \\resumeSubHeadingListEnd\n`;
+  });
+  const tex=String.raw`%------------------------- ${a.label} — generated by CV Studio
+% Compile with XeLaTeX (ctex). On Overleaf set compiler to XeLaTeX.
+\documentclass[letterpaper,11pt]{article}
+\usepackage{ctex}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\pagestyle{fancy}\fancyhf{}\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}
+\addtolength{\oddsidemargin}{-0.5in}\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}\addtolength{\topmargin}{-.5in}\addtolength{\textheight}{1.0in}
+\urlstyle{same}\raggedbottom\raggedright\setlength{\tabcolsep}{0in}
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-2pt}}}}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\ \textit{\small#3} & \textit{\small #4} \\ \end{tabular*}\vspace{-7pt}}
+\newcommand{\resumeProjectHeading}[2]{\item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}\small#1 & #2 \\ \end{tabular*}\vspace{-7pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+\begin{document}
+\begin{center}
+    \textbf{\Huge \scshape ${esc(a.name)}} \\ \vspace{2pt}
+    \small ${esc(a.contact)}
+\end{center}
+${body}
+\end{document}
+`;
+  download(tex, (a.label||'CV').replace(/[^\w一-龥-]+/g,'_')+'.tex', 'text/plain');
+}
+function download(text,filename,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob);
+  const el=document.createElement('a'); el.href=url; el.download=filename; el.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
+
+renderAll();
+</script>
+</body>
+</html>
