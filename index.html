@@ -333,11 +333,13 @@ ${body}
 `;
   download(tex, (a.label||'CV').replace(/[^\w一-龥-]+/g,'_')+'.tex', 'text/plain');
 }
-function download(text,filename,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob);
-  const el=document.createElement('a'); el.href=url; el.download=filename; el.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
 window.addEventListener('beforeprint', ()=>{
   const pg = document.querySelector('.page');
-  const maxH = 10 * 96;
+  // hide print-hidden elements first so we measure true print height
+  const hidden = pg.querySelectorAll('.addbtn,.sec-tools,.ctrls,.bctrls,.mv,.del');
+  hidden.forEach(el => el.style.display = 'none');
+  // force reflow so scrollHeight reflects hidden elements
+  const maxH = 10 * 96; // 10in usable height in px (letter 11in - 1in padding)
   const natural = pg.scrollHeight;
   if(natural > maxH){
     const scale = maxH / natural;
@@ -350,6 +352,9 @@ window.addEventListener('afterprint', ()=>{
   const pg = document.querySelector('.page');
   pg.style.transform = '';
   pg.style.width = '';
+  // restore hidden elements
+  const hidden = pg.querySelectorAll('.addbtn,.sec-tools,.ctrls,.bctrls,.mv,.del');
+  hidden.forEach(el => el.style.display = '');
 });
 
 renderAll();
