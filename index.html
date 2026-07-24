@@ -94,7 +94,7 @@
   <input type="file" id="restore" accept="application/json" style="display:none" onchange="restore(this)">
   <button class="tb primary" onclick="window.print()">🖨 PDF</button>
 </div>
-<div class="hint">Click any text to edit — changes auto-save to this browser. Hover an entry, bullet, skill row, or section title for ▲ ▼ × (move / delete). Use “+” links to add. Backup downloads all your CVs as a file; Restore loads one on another device. PDF → “Save as PDF”.</div>
+<div class="hint">Click any text to edit — changes auto-save to this browser. Hover an entry, bullet, skill row, or section title for ▲ ▼ × (move / delete). Use "+" links to add. Backup downloads all your CVs as a file; Restore loads one on another device. PDF → "Save as PDF".</div>
 
 <div class="page" id="page">
   <div class="name" contenteditable="true" oninput="active().name=this.textContent"></div>
@@ -108,49 +108,53 @@ const LS_KEY = 'cvStudio_v1';
 // ---------- Seed content (EY audit CV) ----------
 function seedResume(){ return {
   label:"EY 审计 SA1（法语组）",
-  name:"郑晨榕   Chenrong Zheng",
-  contact:"510-717-4615  |  chenrong.zheng@berkeley.edu  |  中国籍  |  法语 B2",
+  name:"郑晨荣",
+  contact:"+1 510-717-4615 | +86 13066558250 | chenrong.zheng@berkeley.edu最快可8月15日起入职",
   sections:[
-    { title:"教育背景", type:"entries", items:[
-      { l:"加州大学伯克利分校 & 巴黎政治学院（双学位项目）", r:"2022.08 – 2026.05",
-        sub_l:"经济学学士；辅修 数据科学、国际贸易与金融", sub_r:"巴黎 & 伯克利",
-        bullets:[ "在巴黎政治学院进行两年法语授课学习；法语水平 B2",
-                  "相关课程：金融经济学、计量经济学、商业分析、高等微积分、机器学习" ]}
+    { title:"教育经历", type:"entries", items:[
+      { l:"加州大学伯克利分校 & 巴黎政治学院（双学位）", r:"2022.08 – 2026.05",
+        sub_l:"经济学学士；辅修 数据科学、国际贸易与金融", sub_r:"法国 & 美国",
+        bullets:[ "相关课程：金融经济学、计量经济学、商业分析、高等微积分、机器学习、应用宏微观经济学",
+                  "荣誉论文：运用三重差分（Triple-DiD）模型与 ACS、IPEDS 大规模微观数据，评估移民政策对劳动力市场的影响。" ]}
     ]},
     { title:"工作经历", type:"entries", items:[
+      { l:"数据与运营分析实习生", r:"2025.11 – 2026.07",
+        sub_l:"伯克利数据科学研究院（Berkeley Institute for Data Science）", sub_r:"加利福尼亚",
+        bullets:[
+          "运用 Python、SQL 与 Tableau自动化记录核验、报告生成与数据可视化，产出 20+ 种报告与仪表板，将报告周期从 6 小时缩短至 1 小时以内。",
+          "运用 Python 与 SQL，将来自 110+ 个分散来源、涵盖 13 年间 200+ 场活动的 5560+ 条记录核对并整合为统一的结构化CRM系统，通过交叉比对与匹配确保数据完整性。",
+          "在 Python 中设计数据校验与去重机制（标准化、字段校验、置信度阈值匹配），将人工处理量减少 90%。",
+          "跨 13 个研究团队协作，在Github上统一文档与版本控制，建立命名规范与入职流程，提升报告一致性与可追溯性。" ]},
       { l:"投资与数据分析实习生", r:"2024.06 – 2024.08",
-        sub_l:"Winreal 投资 | 专注硬科技与数字科技的风险投资机构", sub_r:"上海",
+        sub_l:"容亿投资 | 专注硬科技与数字科技的风险投资机构", sub_r:"上海",
         bullets:[
-          "运用 Python 与 SQL 为 25+ 个投资项目搭建 ROI 与情景测试模型；开展市场测算与尽职调查分析，支持超过 100 万美元的投资决策。",
-          "对 30,000 行尽调数据进行数据校验与完整性核对，发现并修正错误，将处理周期缩短 20%。",
-          "通过反复回测将预测误差率从 20% 降至 14%；将分析结果整理为结构化报告与风险评估可视化图表，向相关方汇报。" ]},
-      { l:"数据与运营分析实习生", r:"2025.11 – 2026.06",
-        sub_l:"伯克利数据科学研究院（BIDS）", sub_r:"伯克利",
-        bullets:[
-          "将来自 100+ 个分散来源的 15,000+ 条记录核对并整合进统一的结构化系统，开发 Python 程序进行每周核验与去重，将人工处理量减少 90%。",
-          "使用 Python 与 SQL 自动化每周报告及 20+ 种可视化图表，将报告周期从 6 小时缩短至 1 小时以内。",
-          "在 GitHub 上管理 13 个团队的文档与版本控制；协调 30+ 场研讨会及内外部相关方的沟通。" ]},
+          "运用 Python 构建驱动因素财务模型（五年预测、ROI 与情景测试），通过反复回测与迭代优化，将预测误差率从 20% 降至 14%；将分析结果整理为结构化报告与风险评估可视化图表，向相关方汇报。",
+          "运用 Python 与 SQL 对 30,000 行尽调数据自动化校验，消除人工核对流程、将处理周期缩短 20%，确保数据完整性。",
+          "针对 15+ 个硬科技与数字科技投资项目开展尽职调查，运用 SQL 与 Excel 构建自下而上的市场测算与竞争格局分析，整理成结构化投资委员会材料与可视化图表，向合伙人清晰呈现风险评估。" ]},
       { l:"研究助理", r:"2026.01 – 2026.05",
-        sub_l:"加州大学伯克利分校 经济系（E-URAP 项目）", sub_r:"伯克利",
+        sub_l:"加州大学伯克利分校 经济系（E-URAP 项目）", sub_r:"加利福尼亚",
         bullets:[
-          "在 Stata 与 R 中构建校验检查与可复现性流程，确保 15,000+ 条观测数据的完整性。",
-          "开发 Python 抓取管线，从 250+ 个来源采集并整理 20,000+ 条记录，将人工采集时间减少 95%；对涵盖 50 个州、跨 10 年的数据集进行回归分析。" ]},
+          "运用 Stata 与 R 搭建数据校验与可复现流程，保障 15,000+ 条观测数据的完整性与准确性。",
+          "运用 Python 编写网络爬虫，从 250+ 个来源采集并整理 20,000+ 条记录，人工采集时间缩短 95%；并构建涵盖 50 个州、跨 10 年的纵向数据集，完成回归分析。" ]},
       { l:"商务拓展与分析实习生", r:"2025.06 – 2025.08",
-        sub_l:"Pivot Tokyo | 日本能源峰会主办方", sub_r:"东京",
+        sub_l:"Pivot Tokyo | 日本能源峰会主办方", sub_r:"日本东京",
         bullets:[
-          "对历史定价梯度表现进行差异分析，识别成本驱动因素，使收入提升 15%（约 3,000 美元高毛利收入）。",
-          "搭建追踪 400+ 联系人的 CRM 并自动化每周报告；跨销售、市场与运营团队协作。" ]}
+          "对赞助定价梯度的历史表现进行差异分析，识别成本驱动因素并重构定价模型，带动收入提升 15%。",
+          "统筹活动预算与供应商发票核对，从筹备到落地全程跟踪账目，确保收支数据准确。",
+          "搭建追踪 400+ 联系人的 CRM 并自动化每周报告与仪表板，跨销售、市场与运营团队协作，加快管理层决策。" ]}
     ]},
-    { title:"项目与领导经历", type:"entries", items:[
-      { l:"IoU 实时租赁匹配平台 | Python、SQL、关系型数据库", r:"2026.01 – 2026.05", sub_l:"", sub_r:"",
-        bullets:[ "使用 Python 分析 2,000+ 条竞品房源数据，识别定价规律与需求缺口；设计含 5 张表的关系型数据库并编写 SQL 查询以端到端监控核心指标。" ]},
-      { l:"Millennium Fellowship（联合国学术影响力）| 校园负责人", r:"2023.08 – 2024.05", sub_l:"", sub_r:"",
-        bullets:[ "统筹校园项目并协调团队活动，负责日程管理、跨方协调与成果汇报。" ]}
+    { title:"项目经历", type:"entries", items:[
+      { l:"项目经理", r:"2026.01 – 2026.05",
+        sub_l:"IoU - 实时租赁匹配平台｜Python、SQL、关系型数据库", sub_r:"加利福尼亚",
+        bullets:[
+          "运用 Python 分析 2,000+ 条商品数据，识别定价规律与需求缺口，为平台定价策略与功能优先级提供数据依据。",
+          "设计含 5 张表的关系型数据库架构并编写 SQL 查询，端到端监控转化率、匹配率等核心指标，确保数据结构可追溯。",
+          "运用Agile推进项目，通过 Jira 管理需求与迭代，协调工程与设计团队按期交付。" ]}
     ]},
     { title:"专业技能", type:"skills", rows:[
-      { lab:"数据可视化与编程", val:"Tableau、Power BI、Python（Pandas、NumPy）、R、SQL、Stata、Excel（建模、数据透视表）、Git/GitHub" },
+      { lab:"数据可视化与编程", val:"Tableau、Power BI、Python（Pandas、NumPy）、R、SQL、Stata、Excel（建模、数据透视表）、Git/GitHub、A/B Testing" },
       { lab:"财务与审计相关", val:"财务建模、ROI 与情景分析、数据校验与核对、风险评估、差异分析、文档与报告" },
-      { lab:"语言", val:"中文（母语）、英语（母语）、法语（B2）、韩语（母语）、日语（中级）" }
+      { lab:"语言", val:"中文（母语）、英语（C2）、法语（B2）、韩语（母语）、日语（中级）" }
     ]}
   ]
 };}
@@ -193,7 +197,7 @@ function dupResume(){
 function renameResume(){ const n=prompt("Rename this CV:", active().label); if(n!==null){ active().label=n.trim()||active().label; save(true); renderPicker(); } }
 function delResume(){
   if(store.order.length<=1){ alert("You need at least one CV. Duplicate first if you want a fresh start."); return; }
-  if(!confirm("Delete “"+active().label+"”? This can't be undone.")) return;
+  if(!confirm("Delete \u201c"+active().label+"\u201d? This can\u2019t be undone.")) return;
   const i=store.order.indexOf(store.active); delete store.resumes[store.active]; store.order.splice(i,1);
   store.active=store.order[Math.max(0,i-1)]; save(true); renderAll();
 }
@@ -205,7 +209,7 @@ function restore(input){
   rd.onload=()=>{ try{ const s=JSON.parse(rd.result);
       if(!s.order||!s.resumes) throw 0;
       if(confirm("Restore will replace your current CVs with the backup. Continue?")){ store=s; save(true); renderAll(); } }
-    catch(e){ alert("That file isn't a valid CV Studio backup."); } input.value=''; };
+    catch(e){ alert("That file isn\u2019t a valid CV Studio backup."); } input.value=''; };
   rd.readAsText(f);
 }
 
@@ -228,31 +232,31 @@ function render(){
     const tspan=document.createElement('span'); tspan.contentEditable=true; tspan.textContent=sec.title; tspan.oninput=()=>{sec.title=tspan.textContent; save();};
     title.appendChild(tspan);
     const tools=document.createElement('span'); tools.className='sec-tools';
-    tools.append(mkBtn('mv','▲','Move section up',()=>move(secs,si,-1)), mkBtn('mv','▼','Move section down',()=>move(secs,si,1)),
-                 mkBtn('del','×','Delete section',()=>{ secs.splice(si,1); save(); render(); }));
+    tools.append(mkBtn('mv','\u25b2','Move section up',()=>move(secs,si,-1)), mkBtn('mv','\u25bc','Move section down',()=>move(secs,si,1)),
+                 mkBtn('del','\u00d7','Delete section',()=>{ secs.splice(si,1); save(); render(); }));
     title.appendChild(tools); secEl.appendChild(title);
 
     if(sec.type==='skills'){
       sec.rows.forEach((row,ri)=>{
         const r=document.createElement('div'); r.className='skills-row';
         const c=document.createElement('span'); c.className='bctrls';
-        c.append(mkBtn('mv','▲','Up',()=>move(sec.rows,ri,-1)), mkBtn('mv','▼','Down',()=>move(sec.rows,ri,1)),
-                 mkBtn('del','×','Delete',()=>{ sec.rows.splice(ri,1); save(); render(); }));
+        c.append(mkBtn('mv','\u25b2','Up',()=>move(sec.rows,ri,-1)), mkBtn('mv','\u25bc','Down',()=>move(sec.rows,ri,1)),
+                 mkBtn('del','\u00d7','Delete',()=>{ sec.rows.splice(ri,1); save(); render(); }));
         const lab=document.createElement('span'); lab.className='lab'; lab.contentEditable=true; lab.textContent=row.lab; lab.oninput=()=>{row.lab=lab.textContent; save();};
-        const sep=document.createElement('span'); sep.textContent='：';
+        const sep=document.createElement('span'); sep.textContent='\uff1a';
         const val=document.createElement('span'); val.contentEditable=true; val.textContent=row.val; val.oninput=()=>{row.val=val.textContent; save();};
         r.append(c,lab,sep,val); secEl.appendChild(r);
       });
-      const add=document.createElement('button'); add.className='addbtn'; add.textContent='+ 技能行 row';
-      add.onclick=()=>{ sec.rows.push({lab:"新分类",val:"..."}); save(); render(); };
+      const add=document.createElement('button'); add.className='addbtn'; add.textContent='+ \u6280\u80fd\u884c row';
+      add.onclick=()=>{ sec.rows.push({lab:"\u65b0\u5206\u7c7b",val:"..."}); save(); render(); };
       secEl.appendChild(add); elSections.appendChild(secEl); return;
     }
 
     sec.items.forEach((it,ii)=>{
       const e=document.createElement('div'); e.className='entry';
       const ec=document.createElement('div'); ec.className='ctrls';
-      ec.append(mkBtn('mv','▲','Move entry up',()=>move(sec.items,ii,-1)), mkBtn('mv','▼','Move entry down',()=>move(sec.items,ii,1)),
-                mkBtn('del','×','Delete entry',()=>{ sec.items.splice(ii,1); save(); render(); }));
+      ec.append(mkBtn('mv','\u25b2','Move entry up',()=>move(sec.items,ii,-1)), mkBtn('mv','\u25bc','Move entry down',()=>move(sec.items,ii,1)),
+                mkBtn('del','\u00d7','Delete entry',()=>{ sec.items.splice(ii,1); save(); render(); }));
       e.appendChild(ec);
       const row=document.createElement('div'); row.className='entry-row';
       row.append(mkEdit('l',it,'l'), mkEdit('r',it,'r')); e.appendChild(row);
@@ -262,23 +266,23 @@ function render(){
       it.bullets.forEach((b,bi)=>{
         const li=document.createElement('li');
         const bc=document.createElement('span'); bc.className='bctrls';
-        bc.append(mkBtn('mv','▲','Move bullet up',()=>move(it.bullets,bi,-1)), mkBtn('mv','▼','Move bullet down',()=>move(it.bullets,bi,1)),
-                  mkBtn('del','×','Delete bullet',()=>{ it.bullets.splice(bi,1); save(); render(); }));
+        bc.append(mkBtn('mv','\u25b2','Move bullet up',()=>move(it.bullets,bi,-1)), mkBtn('mv','\u25bc','Move bullet down',()=>move(it.bullets,bi,1)),
+                  mkBtn('del','\u00d7','Delete bullet',()=>{ it.bullets.splice(bi,1); save(); render(); }));
         const span=document.createElement('span'); span.contentEditable=true; span.textContent=b; span.oninput=()=>{it.bullets[bi]=span.textContent; save();};
         li.append(bc,span); ul.appendChild(li);
       });
       e.appendChild(ul);
       const addB=document.createElement('button'); addB.className='addbtn'; addB.textContent='+ bullet';
-      addB.onclick=()=>{ it.bullets.push("新的一条…"); save(); render(); };
+      addB.onclick=()=>{ it.bullets.push("\u65b0\u7684\u4e00\u6761\u2026"); save(); render(); };
       e.appendChild(addB); secEl.appendChild(e);
     });
-    const addE=document.createElement('button'); addE.className='addbtn'; addE.textContent='+ 条目 entry';
-    addE.onclick=()=>{ sec.items.push({l:"职位 / 标题",r:"日期",sub_l:"机构",sub_r:"地点",bullets:["…"]}); save(); render(); };
+    const addE=document.createElement('button'); addE.className='addbtn'; addE.textContent='+ \u6761\u76ee entry';
+    addE.onclick=()=>{ sec.items.push({l:"\u804c\u4f4d / \u6807\u9898",r:"\u65e5\u671f",sub_l:"\u673a\u6784",sub_r:"\u5730\u70b9",bullets:["\u2026"]}); save(); render(); };
     secEl.appendChild(addE); elSections.appendChild(secEl);
   });
   // add-section link
-  const addS=document.createElement('button'); addS.className='addbtn'; addS.textContent='+ 章节 section'; addS.style.marginTop='10px';
-  addS.onclick=()=>{ secs.push({title:"新章节",type:"entries",items:[{l:"职位 / 标题",r:"日期",sub_l:"机构",sub_r:"地点",bullets:["…"]}]}); save(); render(); };
+  const addS=document.createElement('button'); addS.className='addbtn'; addS.textContent='+ \u7ae0\u8282 section'; addS.style.marginTop='10px';
+  addS.onclick=()=>{ secs.push({title:"\u65b0\u7ae0\u8282",type:"entries",items:[{l:"\u804c\u4f4d / \u6807\u9898",r:"\u65e5\u671f",sub_l:"\u673a\u6784",sub_r:"\u5730\u70b9",bullets:["\u2026"]}]}); save(); render(); };
   elSections.appendChild(addS);
 }
 
@@ -291,7 +295,7 @@ function exportLatex(){
     body+=`\n\\section{${esc(sec.title)}}\n`;
     if(sec.type==='skills'){
       body+=` \\begin{itemize}[leftmargin=0.15in, label={}]\n    \\small{\\item{\n`;
-      sec.rows.forEach((row,i)=>{ body+=`     \\textbf{${esc(row.lab)}}{：${esc(row.val)}}`+(i<sec.rows.length-1?' \\\\ \\vspace{2pt}\n':'\n'); });
+      sec.rows.forEach((row,i)=>{ body+=`     \\textbf{${esc(row.lab)}}{\uff1a${esc(row.val)}}`+(i<sec.rows.length-1?' \\\\ \\vspace{2pt}\n':'\n'); });
       body+=`    }}\n \\end{itemize}\n`; return;
     }
     body+=`  \\resumeSubHeadingListStart\n`;
@@ -302,7 +306,7 @@ function exportLatex(){
     });
     body+=`  \\resumeSubHeadingListEnd\n`;
   });
-  const tex=String.raw`%------------------------- ${a.label} — generated by CV Studio
+  const tex=String.raw`%------------------------- ${a.label} \u2014 generated by CV Studio
 % Compile with XeLaTeX (ctex). On Overleaf set compiler to XeLaTeX.
 \documentclass[letterpaper,11pt]{article}
 \usepackage{ctex}
@@ -342,8 +346,10 @@ function exportLatex(){
 ${body}
 \end{document}
 `;
-  download(tex, (a.label||'CV').replace(/[^\w一-龥-]+/g,'_')+'.tex', 'text/plain');
+  download(tex, (a.label||'CV').replace(/[^\w\u4e00-\u9fa5-]+/g,'_')+'.tex', 'text/plain');
 }
+function download(text,filename,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob);
+  const el=document.createElement('a'); el.href=url; el.download=filename; el.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
 
 renderAll();
 </script>
