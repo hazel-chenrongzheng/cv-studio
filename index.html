@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CV Studio — Chenrong Zheng</title>
 <style>
-  :root{ --ink:#111; --muted:#666; --line:#111; --accent:#2c6e49; --bg:#f4f4f2; }
+  :root{ --ink:#111; --muted:#666; --line:#111; --accent:#2c6e49; --bg:#f4f4f2;
+    --cv-font:"Latin Modern Roman","Georgia","Times New Roman","Songti SC","STSong","Noto Serif CJK SC",serif;
+    --cv-scale:1; --cv-font-size:12.5px; }
   *{ box-sizing:border-box; }
-  body{ margin:0; background:var(--bg); color:var(--ink);
-    font-family:"Latin Modern Roman","Georgia","Times New Roman","Songti SC","STSong","Noto Serif CJK SC",serif; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--cv-font); }
   /* ---------- Toolbar ---------- */
   .toolbar{ position:sticky; top:0; z-index:50; background:#1c1c1c; color:#fff;
     display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:9px 16px;
@@ -23,22 +24,36 @@
   button.tb.primary{ background:var(--accent); border-color:var(--accent); }
   .saved{ font-family:system-ui,sans-serif; font-size:12px; color:#7fd1a3; min-width:56px; }
   .hint{ font-family:system-ui,sans-serif; font-size:12px; color:#8a8a8a; padding:6px 16px 0; }
+  /* ---------- Toolbox ---------- */
+  .toolbox{ position:sticky; top:48px; z-index:49; background:#2a2a2a; color:#ddd;
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap; padding:7px 16px;
+    border-top:1px solid #444; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; font-size:12px; }
+  .toolbox label{ display:flex; align-items:center; gap:5px; white-space:nowrap; }
+  .toolbox select, .toolbox input[type=number]{ background:#1c1c1c; color:#fff; border:1px solid #555;
+    border-radius:5px; padding:4px 6px; font-size:12px; }
+  .toolbox select{ max-width:200px; }
+  .toolbox input[type=number]{ width:52px; }
+  .toolbox input[type=range]{ width:100px; accent-color:var(--accent); vertical-align:middle; }
+  .toolbox .zoom-val{ min-width:36px; text-align:center; }
   /* ---------- Page ---------- */
-  .page{ width:8.5in; min-height:11in; margin:18px auto 60px; background:#fff; padding:0.5in 0.6in;
-    box-shadow:0 6px 30px rgba(0,0,0,.15); }
+  .page-wrap{ display:flex; justify-content:center; padding:18px 0 60px; }
+  .page{ width:8.5in; min-height:11in; background:#fff;
+    padding:0.5in 0.6in; box-shadow:0 6px 30px rgba(0,0,0,.15);
+    transform-origin:top center; transform:scale(var(--cv-scale));
+    transition:transform .15s; position:relative; }
   .name{ text-align:center; font-size:30px; font-weight:700; letter-spacing:1px; }
-  .contact{ text-align:center; font-size:12.5px; margin-top:4px; color:#222; }
+  .contact{ text-align:center; font-size:calc(var(--cv-font-size)); margin-top:4px; color:#222; }
   .section{ margin-top:14px; }
-  .sec-title{ font-variant:small-caps; font-size:15px; letter-spacing:.5px; font-weight:700;
+  .sec-title{ font-variant:small-caps; font-size:calc(var(--cv-font-size) + 2.5px); letter-spacing:.5px; font-weight:700;
     border-bottom:1.3px solid var(--line); padding-bottom:2px; margin-bottom:6px; }
   .entry{ position:relative; margin:7px 0; }
   .entry-row{ display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
-  .entry-row .l{ font-weight:700; font-size:13.5px; }
-  .entry-row .r{ font-size:12.5px; white-space:nowrap; }
-  .entry-sub{ display:flex; justify-content:space-between; gap:12px; align-items:baseline; font-style:italic; font-size:12.5px; color:#333; }
+  .entry-row .l{ font-weight:700; font-size:calc(var(--cv-font-size) + 1px); }
+  .entry-row .r{ font-size:var(--cv-font-size); white-space:nowrap; }
+  .entry-sub{ display:flex; justify-content:space-between; gap:12px; align-items:baseline; font-style:italic; font-size:var(--cv-font-size); color:#333; }
   ul.bullets{ margin:3px 0 0; padding-left:18px; }
-  ul.bullets li{ font-size:12.5px; line-height:1.4; margin:2px 0; position:relative; }
-  .skills-row{ font-size:12.5px; line-height:1.5; margin:2px 0; position:relative; }
+  ul.bullets li{ font-size:var(--cv-font-size); line-height:1.4; margin:2px 0; position:relative; }
+  .skills-row{ font-size:var(--cv-font-size); line-height:1.5; margin:2px 0; position:relative; }
   .skills-row .lab{ font-weight:700; }
   [contenteditable]{ outline:none; border-radius:3px; }
   [contenteditable]:hover{ background:#fbf6d9; }
@@ -56,23 +71,19 @@
   .addbtn{ font-family:system-ui,sans-serif; font-size:11.5px; color:var(--accent);
     background:none; border:1px dashed var(--accent); border-radius:6px; padding:2px 8px; cursor:pointer; margin:4px 0; }
   .addbtn:hover{ background:#eaf5ef; }
+  /* ---------- Resize handle ---------- */
+  .resize-handle{ position:absolute; bottom:-6px; right:-6px; width:18px; height:18px;
+    cursor:nwse-resize; z-index:10; display:flex; align-items:center; justify-content:center; }
+  .resize-handle::after{ content:''; display:block; width:10px; height:10px;
+    border-right:2.5px solid #aaa; border-bottom:2.5px solid #aaa; }
+  .resize-handle:hover::after{ border-color:var(--accent); }
+  /* ---------- Print ---------- */
   @media print{
     @page{ size:letter; margin:0; }
     html,body{ background:#fff; }
-    .toolbar,.hint,.addbtn,.sec-tools,.ctrls,.bctrls,.mv,.del{ display:none !important; }
-    .page{ box-shadow:none; margin:0; width:8.5in; min-height:auto;
-      padding:0.4in 0.55in; }
-    .name{ font-size:28px; }
-    .contact{ font-size:12px; margin-top:3px; }
-    .section{ margin-top:11px; }
-    .sec-title{ font-size:14px; padding-bottom:1.5px; margin-bottom:4px; }
-    .entry{ margin:5.5px 0; }
-    .entry-row .l{ font-size:13px; }
-    .entry-row .r{ font-size:12px; }
-    .entry-sub{ font-size:12px; }
-    ul.bullets{ margin:2px 0 0; }
-    ul.bullets li{ font-size:12px; line-height:1.35; margin:1.5px 0; }
-    .skills-row{ font-size:12px; line-height:1.4; margin:1.5px 0; }
+    .toolbar,.toolbox,.hint,.addbtn,.sec-tools,.ctrls,.bctrls,.mv,.del,.resize-handle{ display:none !important; }
+    .page-wrap{ padding:0; }
+    .page{ box-shadow:none; margin:0; width:8.5in; min-height:auto; }
     [contenteditable]:hover,[contenteditable]:focus{ background:none; box-shadow:none; }
   }
 </style>
@@ -94,16 +105,46 @@
   <input type="file" id="restore" accept="application/json" style="display:none" onchange="restore(this)">
   <button class="tb primary" onclick="window.print()">🖨 PDF</button>
 </div>
-<div class="hint">Click any text to edit — changes auto-save to this browser. Hover an entry, bullet, skill row, or section title for ▲ ▼ × (move / delete). Use "+" links to add. Backup downloads all your CVs as a file; Restore loads one on another device. PDF → "Save as PDF".</div>
+<div class="toolbox" id="toolbox">
+  <label>Font:
+    <select id="fontPicker" onchange="setFont(this.value)">
+      <optgroup label="Serif">
+        <option value='"Latin Modern Roman","Georgia","Times New Roman","Songti SC","STSong","Noto Serif CJK SC",serif'>Latin Modern (default)</option>
+        <option value='"Georgia","Songti SC","STSong","Noto Serif CJK SC",serif'>Georgia</option>
+        <option value='"Times New Roman","Songti SC","STSong","Noto Serif CJK SC",serif'>Times New Roman</option>
+        <option value='"Palatino Linotype","Palatino","Songti SC","STSong","Noto Serif CJK SC",serif'>Palatino</option>
+        <option value='"Garamond","Georgia","Songti SC","STSong","Noto Serif CJK SC",serif'>Garamond</option>
+      </optgroup>
+      <optgroup label="Sans-serif">
+        <option value='"Helvetica Neue","Helvetica","Arial","PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif'>Helvetica / Arial</option>
+        <option value='"Calibri","Helvetica","Arial","PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif'>Calibri</option>
+        <option value='"Verdana","PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif'>Verdana</option>
+      </optgroup>
+    </select>
+  </label>
+  <label>Size:
+    <input type="number" id="fontSizeInput" min="9" max="16" step="0.5" value="12.5" onchange="setFontSize(this.value)" oninput="setFontSize(this.value)">px
+  </label>
+  <label>Zoom:
+    <input type="range" id="zoomSlider" min="50" max="150" value="100" oninput="setZoom(this.value)">
+    <span class="zoom-val" id="zoomVal">100%</span>
+  </label>
+  <button class="tb" onclick="resetZoom()" style="padding:3px 8px; font-size:11px;">Reset</button>
+</div>
+<div class="hint">Click any text to edit — changes auto-save to this browser. Hover an entry, bullet, skill row, or section title for ▲ ▼ × (move / delete). Use "+" links to add. Drag the corner ⤡ of the page to resize. Backup downloads all your CVs as a file; Restore loads one on another device. PDF → "Save as PDF".</div>
 
-<div class="page" id="page">
-  <div class="name" contenteditable="true" oninput="active().name=this.textContent"></div>
-  <div class="contact" contenteditable="true" oninput="active().contact=this.textContent"></div>
-  <div id="sections"></div>
+<div class="page-wrap">
+  <div class="page" id="page">
+    <div class="name" contenteditable="true" oninput="active().name=this.textContent"></div>
+    <div class="contact" contenteditable="true" oninput="active().contact=this.textContent"></div>
+    <div id="sections"></div>
+    <div class="resize-handle" id="resizeHandle"></div>
+  </div>
 </div>
 
 <script>
 const LS_KEY = 'cvStudio_v1';
+const TOOLBOX_KEY = 'cvStudio_toolbox';
 
 // ---------- Seed content (EY audit CV) ----------
 function seedResume(){ return {
@@ -149,7 +190,10 @@ function seedResume(){ return {
         bullets:[
           "运用 Python 分析 2,000+ 条商品数据，识别定价规律与需求缺口，为平台定价策略与功能优先级提供数据依据。",
           "设计含 5 张表的关系型数据库架构并编写 SQL 查询，端到端监控转化率、匹配率等核心指标，确保数据结构可追溯。",
-          "运用Agile推进项目，通过 Jira 管理需求与迭代，协调工程与设计团队按期交付。" ]}
+          "运用Agile推进项目，通过 Jira 管理需求与迭代，协调工程与设计团队按期交付。" ]},
+      { l:"Millennium Fellowship（联合国学术影响力）| 校园负责人", r:"2023.08 – 2024.05",
+        sub_l:"", sub_r:"",
+        bullets:[ "统筹校园项目并协调团队活动，负责日程管理、跨方协调与成果汇报。" ]}
     ]},
     { title:"专业技能", type:"skills", rows:[
       { lab:"数据可视化与编程", val:"Tableau、Power BI、Python（Pandas、NumPy）、R、SQL、Stata、Excel（建模、数据透视表）、Git/GitHub、A/B Testing" },
@@ -176,6 +220,109 @@ function save(now){
 function flash(){ const s=document.getElementById('saved'); s.textContent='Saved ✓'; s.style.opacity=.5; setTimeout(()=>s.style.opacity=1,150); }
 function uid(){ return 'r'+Math.random().toString(36).slice(2,9); }
 function active(){ return store.resumes[store.active]; }
+
+// ---------- Toolbox settings ----------
+let tbSettings = loadToolbox();
+function loadToolbox(){
+  try{ const s = JSON.parse(localStorage.getItem(TOOLBOX_KEY)); if(s) return s; }catch(e){}
+  return { font:'"Latin Modern Roman","Georgia","Times New Roman","Songti SC","STSong","Noto Serif CJK SC",serif', fontSize:12.5, zoom:100 };
+}
+function saveToolbox(){ try{ localStorage.setItem(TOOLBOX_KEY, JSON.stringify(tbSettings)); }catch(e){} }
+
+function setFont(val){
+  tbSettings.font = val;
+  document.documentElement.style.setProperty('--cv-font', val);
+  saveToolbox();
+}
+function setFontSize(val){
+  val = Math.max(9, Math.min(16, parseFloat(val)||12.5));
+  tbSettings.fontSize = val;
+  document.documentElement.style.setProperty('--cv-font-size', val+'px');
+  document.getElementById('fontSizeInput').value = val;
+  saveToolbox();
+}
+function setZoom(val){
+  val = Math.max(50, Math.min(150, parseInt(val)||100));
+  tbSettings.zoom = val;
+  document.documentElement.style.setProperty('--cv-scale', val/100);
+  document.getElementById('zoomSlider').value = val;
+  document.getElementById('zoomVal').textContent = val+'%';
+  saveToolbox();
+}
+function resetZoom(){ setZoom(100); }
+
+function applyToolbox(){
+  document.documentElement.style.setProperty('--cv-font', tbSettings.font);
+  document.documentElement.style.setProperty('--cv-font-size', tbSettings.fontSize+'px');
+  document.documentElement.style.setProperty('--cv-scale', tbSettings.zoom/100);
+  // sync UI
+  document.getElementById('fontPicker').value = tbSettings.font;
+  document.getElementById('fontSizeInput').value = tbSettings.fontSize;
+  document.getElementById('zoomSlider').value = tbSettings.zoom;
+  document.getElementById('zoomVal').textContent = tbSettings.zoom+'%';
+}
+
+// ---------- Drag-to-resize (corner handle) ----------
+(function(){
+  const handle = document.getElementById('resizeHandle');
+  const page = document.getElementById('page');
+  let startX, startY, startZoom;
+  function onDown(e){
+    e.preventDefault();
+    const ev = e.touches ? e.touches[0] : e;
+    startX = ev.clientX; startY = ev.clientY;
+    startZoom = tbSettings.zoom;
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, {passive:false});
+    document.addEventListener('touchend', onUp);
+  }
+  function onMove(e){
+    e.preventDefault();
+    const ev = e.touches ? e.touches[0] : e;
+    const dx = ev.clientX - startX;
+    const dy = ev.clientY - startY;
+    // use the bigger delta direction
+    const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+    const newZoom = Math.round(Math.max(50, Math.min(150, startZoom + delta * 0.3)));
+    setZoom(newZoom);
+  }
+  function onUp(){
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  }
+  handle.addEventListener('mousedown', onDown);
+  handle.addEventListener('touchstart', onDown, {passive:false});
+})();
+
+// ---------- Print: scale to fit one page ----------
+window.addEventListener('beforeprint', ()=>{
+  const page = document.getElementById('page');
+  // Measure natural height of content at current font size
+  const oldTransform = page.style.transform;
+  page.style.transform = 'none';
+  const contentH = page.scrollHeight;
+  const pageH = 11 * 96; // 11 inches in px at 96dpi
+  const pageW = 8.5 * 96;
+  page.style.transform = oldTransform;
+
+  if(contentH > pageH){
+    const scale = pageH / contentH;
+    page.style.transform = 'scale('+scale+')';
+    page.style.transformOrigin = 'top left';
+    page.style.width = (pageW / scale)+'px';
+  } else {
+    page.style.transform = 'none';
+  }
+});
+window.addEventListener('afterprint', ()=>{
+  const page = document.getElementById('page');
+  page.style.transform = 'scale('+tbSettings.zoom/100+')';
+  page.style.transformOrigin = 'top center';
+  page.style.width = '8.5in';
+});
 
 // ---------- Resume manager ----------
 function renderPicker(){
@@ -209,7 +356,7 @@ function restore(input){
   rd.onload=()=>{ try{ const s=JSON.parse(rd.result);
       if(!s.order||!s.resumes) throw 0;
       if(confirm("Restore will replace your current CVs with the backup. Continue?")){ store=s; save(true); renderAll(); } }
-    catch(e){ alert("That file isn\u2019t a valid CV Studio backup."); } input.value=''; };
+    catch(e){ alert("That file isn't a valid CV Studio backup."); } input.value=''; };
   rd.readAsText(f);
 }
 
@@ -232,31 +379,31 @@ function render(){
     const tspan=document.createElement('span'); tspan.contentEditable=true; tspan.textContent=sec.title; tspan.oninput=()=>{sec.title=tspan.textContent; save();};
     title.appendChild(tspan);
     const tools=document.createElement('span'); tools.className='sec-tools';
-    tools.append(mkBtn('mv','\u25b2','Move section up',()=>move(secs,si,-1)), mkBtn('mv','\u25bc','Move section down',()=>move(secs,si,1)),
-                 mkBtn('del','\u00d7','Delete section',()=>{ secs.splice(si,1); save(); render(); }));
+    tools.append(mkBtn('mv','▲','Move section up',()=>move(secs,si,-1)), mkBtn('mv','▼','Move section down',()=>move(secs,si,1)),
+                 mkBtn('del','×','Delete section',()=>{ secs.splice(si,1); save(); render(); }));
     title.appendChild(tools); secEl.appendChild(title);
 
     if(sec.type==='skills'){
       sec.rows.forEach((row,ri)=>{
         const r=document.createElement('div'); r.className='skills-row';
         const c=document.createElement('span'); c.className='bctrls';
-        c.append(mkBtn('mv','\u25b2','Up',()=>move(sec.rows,ri,-1)), mkBtn('mv','\u25bc','Down',()=>move(sec.rows,ri,1)),
-                 mkBtn('del','\u00d7','Delete',()=>{ sec.rows.splice(ri,1); save(); render(); }));
+        c.append(mkBtn('mv','▲','Up',()=>move(sec.rows,ri,-1)), mkBtn('mv','▼','Down',()=>move(sec.rows,ri,1)),
+                 mkBtn('del','×','Delete',()=>{ sec.rows.splice(ri,1); save(); render(); }));
         const lab=document.createElement('span'); lab.className='lab'; lab.contentEditable=true; lab.textContent=row.lab; lab.oninput=()=>{row.lab=lab.textContent; save();};
-        const sep=document.createElement('span'); sep.textContent='\uff1a';
+        const sep=document.createElement('span'); sep.textContent='：';
         const val=document.createElement('span'); val.contentEditable=true; val.textContent=row.val; val.oninput=()=>{row.val=val.textContent; save();};
         r.append(c,lab,sep,val); secEl.appendChild(r);
       });
-      const add=document.createElement('button'); add.className='addbtn'; add.textContent='+ \u6280\u80fd\u884c row';
-      add.onclick=()=>{ sec.rows.push({lab:"\u65b0\u5206\u7c7b",val:"..."}); save(); render(); };
+      const add=document.createElement('button'); add.className='addbtn'; add.textContent='+ 技能行 row';
+      add.onclick=()=>{ sec.rows.push({lab:"新分类",val:"..."}); save(); render(); };
       secEl.appendChild(add); elSections.appendChild(secEl); return;
     }
 
     sec.items.forEach((it,ii)=>{
       const e=document.createElement('div'); e.className='entry';
       const ec=document.createElement('div'); ec.className='ctrls';
-      ec.append(mkBtn('mv','\u25b2','Move entry up',()=>move(sec.items,ii,-1)), mkBtn('mv','\u25bc','Move entry down',()=>move(sec.items,ii,1)),
-                mkBtn('del','\u00d7','Delete entry',()=>{ sec.items.splice(ii,1); save(); render(); }));
+      ec.append(mkBtn('mv','▲','Move entry up',()=>move(sec.items,ii,-1)), mkBtn('mv','▼','Move entry down',()=>move(sec.items,ii,1)),
+                mkBtn('del','×','Delete entry',()=>{ sec.items.splice(ii,1); save(); render(); }));
       e.appendChild(ec);
       const row=document.createElement('div'); row.className='entry-row';
       row.append(mkEdit('l',it,'l'), mkEdit('r',it,'r')); e.appendChild(row);
@@ -266,23 +413,23 @@ function render(){
       it.bullets.forEach((b,bi)=>{
         const li=document.createElement('li');
         const bc=document.createElement('span'); bc.className='bctrls';
-        bc.append(mkBtn('mv','\u25b2','Move bullet up',()=>move(it.bullets,bi,-1)), mkBtn('mv','\u25bc','Move bullet down',()=>move(it.bullets,bi,1)),
-                  mkBtn('del','\u00d7','Delete bullet',()=>{ it.bullets.splice(bi,1); save(); render(); }));
+        bc.append(mkBtn('mv','▲','Move bullet up',()=>move(it.bullets,bi,-1)), mkBtn('mv','▼','Move bullet down',()=>move(it.bullets,bi,1)),
+                  mkBtn('del','×','Delete bullet',()=>{ it.bullets.splice(bi,1); save(); render(); }));
         const span=document.createElement('span'); span.contentEditable=true; span.textContent=b; span.oninput=()=>{it.bullets[bi]=span.textContent; save();};
         li.append(bc,span); ul.appendChild(li);
       });
       e.appendChild(ul);
       const addB=document.createElement('button'); addB.className='addbtn'; addB.textContent='+ bullet';
-      addB.onclick=()=>{ it.bullets.push("\u65b0\u7684\u4e00\u6761\u2026"); save(); render(); };
+      addB.onclick=()=>{ it.bullets.push("新的一条…"); save(); render(); };
       e.appendChild(addB); secEl.appendChild(e);
     });
-    const addE=document.createElement('button'); addE.className='addbtn'; addE.textContent='+ \u6761\u76ee entry';
-    addE.onclick=()=>{ sec.items.push({l:"\u804c\u4f4d / \u6807\u9898",r:"\u65e5\u671f",sub_l:"\u673a\u6784",sub_r:"\u5730\u70b9",bullets:["\u2026"]}); save(); render(); };
+    const addE=document.createElement('button'); addE.className='addbtn'; addE.textContent='+ 条目 entry';
+    addE.onclick=()=>{ sec.items.push({l:"职位 / 标题",r:"日期",sub_l:"机构",sub_r:"地点",bullets:["…"]}); save(); render(); };
     secEl.appendChild(addE); elSections.appendChild(secEl);
   });
   // add-section link
-  const addS=document.createElement('button'); addS.className='addbtn'; addS.textContent='+ \u7ae0\u8282 section'; addS.style.marginTop='10px';
-  addS.onclick=()=>{ secs.push({title:"\u65b0\u7ae0\u8282",type:"entries",items:[{l:"\u804c\u4f4d / \u6807\u9898",r:"\u65e5\u671f",sub_l:"\u673a\u6784",sub_r:"\u5730\u70b9",bullets:["\u2026"]}]}); save(); render(); };
+  const addS=document.createElement('button'); addS.className='addbtn'; addS.textContent='+ 章节 section'; addS.style.marginTop='10px';
+  addS.onclick=()=>{ secs.push({title:"新章节",type:"entries",items:[{l:"职位 / 标题",r:"日期",sub_l:"机构",sub_r:"地点",bullets:["…"]}]}); save(); render(); };
   elSections.appendChild(addS);
 }
 
@@ -295,7 +442,7 @@ function exportLatex(){
     body+=`\n\\section{${esc(sec.title)}}\n`;
     if(sec.type==='skills'){
       body+=` \\begin{itemize}[leftmargin=0.15in, label={}]\n    \\small{\\item{\n`;
-      sec.rows.forEach((row,i)=>{ body+=`     \\textbf{${esc(row.lab)}}{\uff1a${esc(row.val)}}`+(i<sec.rows.length-1?' \\\\ \\vspace{2pt}\n':'\n'); });
+      sec.rows.forEach((row,i)=>{ body+=`     \\textbf{${esc(row.lab)}}{：${esc(row.val)}}`+(i<sec.rows.length-1?' \\\\ \\vspace{2pt}\n':'\n'); });
       body+=`    }}\n \\end{itemize}\n`; return;
     }
     body+=`  \\resumeSubHeadingListStart\n`;
@@ -306,7 +453,7 @@ function exportLatex(){
     });
     body+=`  \\resumeSubHeadingListEnd\n`;
   });
-  const tex=String.raw`%------------------------- ${a.label} \u2014 generated by CV Studio
+  const tex=String.raw`%------------------------- ${a.label} — generated by CV Studio
 % Compile with XeLaTeX (ctex). On Overleaf set compiler to XeLaTeX.
 \documentclass[letterpaper,11pt]{article}
 \usepackage{ctex}
@@ -346,11 +493,12 @@ function exportLatex(){
 ${body}
 \end{document}
 `;
-  download(tex, (a.label||'CV').replace(/[^\w\u4e00-\u9fa5-]+/g,'_')+'.tex', 'text/plain');
+  download(tex, (a.label||'CV').replace(/[^\w一-龥-]+/g,'_')+'.tex', 'text/plain');
 }
 function download(text,filename,type){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob);
   const el=document.createElement('a'); el.href=url; el.download=filename; el.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
 
+applyToolbox();
 renderAll();
 </script>
 </body>
